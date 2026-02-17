@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Dot Game</title>
+  <style>
+    canvas { background: #111; display: block; margin: auto; }
+  </style>
+</head>
+<body>
+<canvas id="game" width="500" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const ws = new WebSocket("ws://localhost:8080");
+
+let players = {};
+
+ws.onmessage = e => {
+  players = JSON.parse(e.data);
+};
+
+document.addEventListener("keydown", e => {
+  const moves = {
+    ArrowUp:    { dx: 0, dy: -5 },
+    ArrowDown:  { dx: 0, dy: 5 },
+    ArrowLeft:  { dx: -5, dy: 0 },
+    ArrowRight: { dx: 5, dy: 0 }
+  };
+  if (moves[e.key]) {
+    ws.send(JSON.stringify({ type: "move", ...moves[e.key] }));
+  }
+});
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  Object.values(players).forEach(p => {
+    ctx.fillStyle = "lime";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
