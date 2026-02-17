@@ -1,0 +1,18 @@
+function rollTheUniverse() {
+  const outcomes = [
+    "✨ Everything works perfectly",
+    "🐛 A bug appears but feels friendly",
+    "🔥 Something breaks dramatically",
+    "😎 You pretend this was intentional",
+    "🚀 Accidental optimization achieved"
+  ];
+
+  const spin = Math.floor(Math.random() * outcomes.length);
+
+  console.log("Spinning the wheel of destiny...");
+  setTimeout(() => {
+    console.log("Result:", outcomes[spin]);
+  }, 800);
+}
+
+rollTheUniverse();
