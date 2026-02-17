@@ -1,0 +1,32 @@
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+let board = Array(9).fill(null);
+let turn = "X";
+
+io.on("connection", socket => {
+  socket.emit("state", { board, turn });
+
+  socket.on("move", index => {
+    if (!board[index]) {
+      board[index] = turn;
+      turn = turn === "X" ? "O" : "X";
+      io.emit("state", { board, turn });
+    }
+  });
+
+  socket.on("reset", () => {
+    board = Array(9).fill(null);
+    turn = "X";
+    io.emit("state", { board, turn });
+  });
+});
+
+server.listen(3000, () =>
+  console.log("Game running at http://localhost:3000")
+);
